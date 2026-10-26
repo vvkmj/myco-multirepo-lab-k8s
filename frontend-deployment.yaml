@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myco-lab-frontend-deployment
+  labels:
+    app: myco-lab-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myco-lab-frontend
+  template:
+    metadata:
+      labels:
+        app: myco-lab-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ghcr.io/vvkmj/myco-multirepo-lab-frontend:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        # Frontend reads VITE_API_BASE_URL to call backend via relative ingress path
+        - name: VITE_API_BASE_URL
+          value: ""
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "128Mi"
+          requests:
+            cpu: "50m"
+            memory: "64Mi"

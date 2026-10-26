@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myco-lab-backend-deployment
+  labels:
+    app: myco-lab-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myco-lab-backend
+  template:
+    metadata:
+      labels:
+        app: myco-lab-backend
+    spec:
+      containers:
+      - name: backend
+        image: ghcr.io/vvkmj/myco-multirepo-lab-backend:1.4.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: PORT
+          value: "8080"
+        - name: LOG_LEVEL
+          value: "info"
+        resources:
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+        livenessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 5
